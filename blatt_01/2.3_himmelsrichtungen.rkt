@@ -7,11 +7,17 @@
 ; Aufgabe 2.3 Himmelsrichtungen
 
 
+; Berechnet einen entsprechenden Winkel in [0, 360).
+(define (normalize-direction α)
+        (cond ((< α 0) (normalize-direction (+ α 360)))
+              ((>= α 360) (normalize-direction (- α 360)))
+              (else α)))
+
 ; Wandelt einen Kurs in Grad in eine symbolische Himmelsrichtung um.
 ; Parameter (in Grad):
 ; α ∈ [0, 360)
 ; Return ∈ {"N", "NNE", ..., "NNW"}
-(define (Grad->Himmelsrichtung α)
+(define (Grad->Himmelsrichtung-helper α)
         (cond ((or (<= α 11.25) (> α 348.75)) "N")
               ((<= α  33.75) "NNE")
               ((<= α  56.25) "NE")
@@ -28,6 +34,13 @@
               ((<= α 303.75) "WNW")
               ((<= α 326.25) "NW")
               ((<= α 348.75) "NNW")))
+
+; Wandelt einen Kurs in Grad in eine symbolische Himmelsrichtung um.
+; Parameter (in Grad):
+; α: Richtung
+; Return ∈ {"N", "NNE", ..., "NNW"}
+(define (Grad->Himmelsrichtung α)
+        (Grad->Himmelsrichtung-helper (normalize-direction α)))
 
 
 ; Wandelt eine Himmelsrichtung in eine Angabe in Grad um.
@@ -51,4 +64,3 @@
               ((string=? h "NW")  315.0)
               ((string=? h "NNW") 337.5)))
 
-(Grad->Himmelsrichtung 251.78)

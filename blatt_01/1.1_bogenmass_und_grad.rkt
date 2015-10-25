@@ -7,12 +7,12 @@
 ; Aufgabe 1.1 Bogenmaß und Grad
 
 ; Konvertiert einen Winkel in Grad ins Bogenmaß.
-(define (degrees->radians phi)
-        (/ (* 2 pi phi) 360))
+(define (degrees->radians φ)
+        (/ (* 2 pi φ) 360))
 
 ; Konvertiert einen Winkel vom Bogenmaß nach Grad.
-(define (radians->degrees phi)
-        (/ (* 360 phi) (* 2 pi)))
+(define (radians->degrees φ)
+        (/ (* 360 φ) (* 2 pi)))
 
 
 (provide degrees->radians radians->degrees)

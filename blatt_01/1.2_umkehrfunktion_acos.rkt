@@ -10,5 +10,8 @@
 (define (my-acos x)
         (if (= x -1)
             pi
-            (* 2 (atan (/ (sqrt (- 1 (sqr x))) (+ 1 x))))))
+            (* 2
+               (atan (/ (sqrt (- 1
+                                 (sqr x)))
+                        (+ 1 x))))))
 

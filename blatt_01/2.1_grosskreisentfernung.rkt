@@ -10,6 +10,12 @@
 (require "./1.3_kilometer_und_seemeilen.rkt")
 
 
+; Berechnet die Großkreisentfernung in Radiant zwischen zwei Punkten A und B.
+; Parameter (im Bogenmaß):
+; φA: Breitengrad von A
+; λA: Längengrad von A
+; φB: Breitengrad von B
+; λB: Längengrad von B
 (define (great-circle-distance φA λA φB λB)
         (acos (+ (* (sin φA)
                     (sin φB))
