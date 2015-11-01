@@ -1,7 +1,7 @@
 #!/usr/bin/env racket
 #lang racket
 
-; SE3 Übungsblatt 1
+; SE3 FP Übungsblatt 1
 ; Gruppe 14 (Do. 10-12 Uhr R-031) bei David Mosteller
 ; Jan-Hendrik Briese, Lennart Braun, Felix Gebauer
 ; Aufgabe 2.2 Anfangskurs
@@ -18,8 +18,9 @@
                     (sin dG))))
 )
 
-(define (fix-dir α direction)
-        (if (string=? "west" direction)
+(define (fix-dir α λA λB)
+        (if (and (< λB λA)
+                 (< (- λA λB) 180))
             (- 360 α)
             α))
 
@@ -29,8 +30,7 @@
 ; λA: Längengrad von A
 ; φB: Breitengrad von B
 ; λB: Längengrad von B
-; dir = "west" | "east": Richtung, in die gefahren werden soll
-(define (initial-course φA λA φB λB dir)
+(define (initial-course φA λA φB λB)
         (fix-dir
             (radians->degrees
                 (course-helper
@@ -42,16 +42,17 @@
                                            (degrees->radians λB))
                 )
             )
-            dir
+            λA
+            λB
         )
 )
 
 ; Oslo - Hongkong: 67.44°
-(initial-course 59.93 10.75 22.20 114.10 "east")
+(initial-course 59.93 10.75 22.20 114.10)
 
 ; San Francisco - Honolulu: 251.78°
-(initial-course 37.75 -122.45 21.32 -157.83 "west")
+(initial-course 37.75 -122.45 21.32 -157.83)
 
 ; Osterinsel - Lima: 70.07°
-(initial-course -27.10 -109.40 -12.10 -77.05 "east")
+(initial-course -27.10 -109.40 -12.10 -77.05)
 

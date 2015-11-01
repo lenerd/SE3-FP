@@ -1,7 +1,7 @@
 #!/usr/bin/env racket
 #lang racket
 
-; SE3 Übungsblatt 1
+; SE3 FP Übungsblatt 1
 ; Gruppe 14 (Do. 10-12 Uhr R-031) bei David Mosteller
 ; Jan-Hendrik Briese, Lennart Braun, Felix Gebauer
 ; Aufgabe 2.1 Großkreisentfernung
@@ -10,6 +10,12 @@
 (require "./1.3_kilometer_und_seemeilen.rkt")
 
 
+; Berechnet die Großkreisentfernung in Radiant zwischen zwei Punkten A und B.
+; Parameter (im Bogenmaß):
+; φA: Breitengrad von A
+; λA: Längengrad von A
+; φB: Breitengrad von B
+; λB: Längengrad von B
 (define (great-circle-distance φA λA φB λB)
         (acos (+ (* (sin φA)
                     (sin φB))
