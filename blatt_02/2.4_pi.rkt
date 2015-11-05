@@ -23,9 +23,15 @@
 (define (decimal-places->accuracy n)
         (power (/ 1 10) n))
 
-; (π (decimal-places->accuracy 5))
-; Stellen | Zeit
-;       4      2.99s
-;       5   1141.93s
-; Die Ausgabe ist leider z lang für meine Zwischenablage. :(
+; (round (* (expt 10 10) (π (decimal-places->accuracy 4))))
 
+; Stellen | Zeit     | Annäherung an π
+; --------+----------+----------------
+;       4 |    2.99s | 3.141
+;       5 | 1141.93s | 3.1415
+; Für mehr Stellen reicht die Geduld (und Zeit) nicht. :)
+; Speicherplatz ist durch die Tail Recursion noch reichlich vorhanden.
+
+; Dass die Gregory–Leibniz-Reihe langsamer konvergiert als die gegebene Reihe
+; zur Approximierung von e, kann darauf zurückgeführt werden, dass für n -> ∞
+; 1/n! schneller gegen 0 strebt als 1/n.

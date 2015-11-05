@@ -23,7 +23,7 @@
 ; 1.
 ; > miau
 ; 'Plueschi
-; miau ist an 'Plueschi gebunden.
+; miau ist an das Symbol 'Plueschi gebunden.
 
 ; 2.
 ; > katze
@@ -58,7 +58,7 @@
 ; 7.
 ; > (eval 'tiger)
 ; 'miau
-; 'tiger wird zu tiger evaluiert, welches an 'miau gebunden ist.
+; Das Symbol 'tiger wird zu tiger evaluiert, welches an 'miau gebunden ist.
 
 ; 8.
 ; > (welcherNameGiltWo 'harry 'potter)

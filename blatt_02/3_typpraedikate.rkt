@@ -11,7 +11,7 @@
 ; angibt. Ist dieser unbekannt, wird 'unknown zrückgegeben.
 (define (type-of x)
         (cond ((boolean? x) 'boolean)
-              ((list? x) 'list)  ; eine Liste ist ein Sonderfall eines Paares
+              ((list? x) 'list)  ; eine Liste leer oder ein besonderes Paar
               ((pair? x) 'pair)  ; erkennt Paare, welche keine Listen sind
               ((symbol? x) 'symbol)
               ((number? x) 'number)
@@ -36,7 +36,7 @@
 
 ; (type-of '())
 ; 'list
-; () ist eine leere Liste.
+; '() ist eine leere Liste.
 
 (define (id z) z)
 
