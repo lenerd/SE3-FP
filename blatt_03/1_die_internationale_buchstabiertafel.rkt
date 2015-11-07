@@ -102,3 +102,5 @@
 ; > (spell "f00b4r")
 ; '("Foxtrott" "Nadazero" "Nadazero" "Bravo" "Kartefour" "Romero")
 
+
+(provide upper)
