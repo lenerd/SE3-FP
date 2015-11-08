@@ -7,100 +7,92 @@
 ; Aufgabe 1: Die internationale Buchstabiertafel
 
 ; 1. Datenstruktur
-(define table
-        '((#\A . "Alfa")
-          (#\B . "Bravo")
-          (#\C . "Charlie")
-          (#\D . "Delta")
-          (#\E . "Echo")
-          (#\F . "Foxtrott")
-          (#\G . "Golf")
-          (#\H . "Hotel")
-          (#\I . "India")
-          (#\J . "Juliett")
-          (#\K . "Kilo")
-          (#\L . "Lima")
-          (#\M . "Mike")
-          (#\N . "November")
-          (#\O . "Oscar")
-          (#\P . "Papa")
-          (#\Q . "Quebec")
-          (#\R . "Romero")
-          (#\S . "Sierra")
-          (#\T . "Tango")
-          (#\U . "Uniform")
-          (#\V . "Viktor")
-          (#\W . "Whiskey")
-          (#\X . "X-ray")
-          (#\Y . "Yankee")
-          (#\Z . "Zulu")
-          (#\0 . "Nadazero")
-          (#\1 . "Unaone")
-          (#\2 . "Bissotwo")
-          (#\3 . "Terrathree")
-          (#\4 . "Kartefour")
-          (#\5 . "Pantafive")
-          (#\6 . "Soxisix")
-          (#\7 . "Setteseven")
-          (#\8 . "Oktoeight")
-          (#\9 . "Novenine")
-          (#\, . "Decimal")
-          (#\. . "Stop")))
-; TODO: Begründung
+
+; Liste von Großbuchstaben, Ziffern, Komma und Punkt
+(define chars (list #\A #\B #\C #\D #\E #\F #\G #\H #\I #\J #\K #\L #\M #\N #\O
+                    #\P #\Q #\R #\S #\T #\U #\V #\W #\X #\Y #\Z #\0 #\1 #\2 #\3
+                    #\4 #\5 #\6 #\7 #\8 #\9 #\, #\.))
+
+; Liste der entsprechenden Buchstabierschlüssel
+(define icao-alphabet (list "Alfa" "Bravo" "Charlie" "Delta" "Echo" "Foxtrott"  
+                            "Golf" "Hotel" "India" "Juliett" "Kilo" "Lima"
+                            "Mike" "November" "Oscar" "Papa" "Quebec" "Romeo"
+                            "Sierra" "Tango" "Uniform" "Viktor" "Whiskey"
+                            "X-ray" "Yankee" "Zulu" "Nadazero" "Unaone"
+                            "Bissotwo" "Terrathree" "Kartefour" "Pantafive"
+                            "Soxisix" "Setteseven" "Oktoeight" "Novenine"
+                            "Decimal" "Stop"))
 
 
-; 2. encode
-(define (encode c)
-        (cdr (assoc c table)))
+; Association List von Buchstaben und Buchstabierschlüssel (Liste von Pairs mit
+; dem Buchstaben als erstes Element und dem entsprechenden Buchstabierschlüssel
+; als zweites Element)
+; Begründung: Eine einfach zu erstellende und benutzende Datenstruktur.
+(define icao-table (map cons chars icao-alphabet))
 
-; > (encode #\B)
+
+; 2.
+; Encodiert einen char als Buchstabierschlüssel.
+(define (char->icao c)
+        (cdr (assoc c icao-table)))
+
+; (char->icao #\B)
 ; "Bravo"
-; > (encode #\4)
+
+; (char->icao #\4)
 ; "Kartefour"
-; > (encode #\2)
+
+; (char->icao #\2)
 ; "Bissotwo"
-; > (encode #\,)
+
+; (char->icao #\,)
 ; "Decimal"
-; > (encode #\.)
+
+; (char->icao #\.)
 ; "Stop"
 
 
-; 3. upper
-
-; Accepts a character. Returns the uppercase version if the argument is a
-; lower case character; else the argument itself is returned.
+; 3.
+; Wandelt einen Buchstaben c in einen Großbuchstaben um, falls dieser ein
+; Kleinbuchstabe ist.
 (define (upper c)
         (let ((ascii (char->integer c)))
              (if (and (<= #x61 ascii) (<= ascii #x7a))
                  (integer->char (- ascii #x20))
                  c)))
 
-; > (upper #\a)
+; (upper #\a)
 ; #\A
-; > (upper #\A)
+
+; (upper #\A)
 ; #\A
-; > (upper #\space)
+
+; (upper #\space)
 ; #\space
-; > (upper #\newline)
+
+; (upper #\newline)
 ; #\newline
-; > (upper #\0)
+
+; (upper #\0)
 ; #\0
 
 
 ; 4. Buchstabieren
 
-(define (spell-helper l)
-        (if (empty? l) '()
-            (cons (encode (upper (car l))) (spell-helper (cdr l)))))
 
 ; Akzeptiert ein Wort
 ; s ∈ {'a', 'b', ..., 'z', 'A', 'B', ..., 'Z', '0', '1', ..., '9', ',', '.'}^*
 ; Gibt eine Liste der entsprechenden Buchstabierschlüssel zurück.
 (define (spell s)
+
+        (define (spell-helper l)
+                (if (empty? l) '()
+                    (cons (char->icao (upper (car l))) (spell-helper (cdr l)))))
+
         (spell-helper (string->list s)))
 
-; > (spell "f00b4r")
-; '("Foxtrott" "Nadazero" "Nadazero" "Bravo" "Kartefour" "Romero")
+; (spell "f00b4r")
+; '("Foxtrott" "Nadazero" "Nadazero" "Bravo" "Kartefour" "Romeo")
 
 
-(provide upper)
+(provide chars upper)

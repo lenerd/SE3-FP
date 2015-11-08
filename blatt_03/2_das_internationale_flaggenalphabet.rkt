@@ -6,55 +6,44 @@
 ; Jan-Hendrik Briese, Lennart Braun, Felix Gebauer
 ; Aufgabe 2 Das internationale Flaggenalphabet
 
-;(require "./flaggen-module.rkt")
+(require "./1_die_internationale_buchstabiertafel.rkt")
+; (require "./flaggen-module.rkt")
 (require se3-bib/flaggen-module)
 
+; 1.
+; Liste der Flaggen entsprechend zu der importierten chars
+(define flags (list A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Z0 Z1
+                    Z2 Z3 Z4 Z5 Z6 Z7 Z8 Z9 '_ '_))
 
-; 1. Datenstruktur
-(define table
-        '((#\A . A)
-          (#\B . B)
-          (#\C . C)
-          (#\D . D)
-          (#\E . E)
-          (#\F . F)
-          (#\G . G)
-          (#\H . H)
-          (#\I . I)
-          (#\J . J)
-          (#\K . K)
-          (#\L . L)
-          (#\M . M)
-          (#\N . N)
-          (#\O . O)
-          (#\P . P)
-          (#\Q . Q)
-          (#\R . R)
-          (#\S . S)
-          (#\T . T)
-          (#\U . U)
-          (#\V . V)
-          (#\W . W)
-          (#\X . X)
-          (#\Y . Y)
-          (#\Z . Z)
-          (#\0 . Z0)
-          (#\1 . Z1)
-          (#\2 . Z2)
-          (#\3 . Z3)
-          (#\4 . Z4)
-          (#\5 . Z5)
-          (#\6 . Z6)
-          (#\7 . Z7)
-          (#\8 . Z8)
-          (#\9 . Z9)))
-; TODO: Begründung
+; Association List von Buchstaben und Flagge (Liste von Pairs mit dem
+; Buchstaben als erstes Element und der entsprechenden Flagge als zweites
+; Element)
+; Begründung: Eine einfach zu erstellende und benutzende Datenstruktur.
+(define flag-table (map cons chars flags))
 
 
-; 2. encode
-(define (encode c)
-        (cdr (assoc c table)))
+; 2.
+; Encodiert einen char als Flagge.
+(define (char->flag c)
+        (cdr (assoc c flag-table)))
 
-(encode #\F)
-(encode #\O)
-(encode #\0)
+; (char->flag #\F)
+; (char->flag #\O)
+; (char->flag #\0)
+
+
+; 3. Buchstabieren
+
+
+; Akzeptiert ein Wort
+; s ∈ {'a', 'b', ..., 'z', 'A', 'B', ..., 'Z', '0', '1', ..., '9'}^*
+; Gibt eine Liste der entsprechenden Flaggen zurück.
+(define (flag-spell s)
+
+        (define (flag-spell-helper l)
+                (if (empty? l) '()
+                    (cons (char->flag (upper (car l))) (flag-spell-helper (cdr l)))))
+
+        (flag-spell-helper (string->list s)))
+
+(flag-spell "f00b4r")
