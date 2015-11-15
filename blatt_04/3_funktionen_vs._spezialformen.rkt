@@ -8,7 +8,11 @@
 
 (define (hoch3 x) (* x x x))
 
-; normal-order evaluation
+; Auswertung mit äußerer Reduktion
+; Hier werden die Ausdrücke, die außen stehen, zuerst ausgewertet. Funktions-
+; argumente werden zunächst ohne Auswertung in den Rumpf der Funktion
+; eingesetzt.
+; Beispiel:
 ; (hoch3 (* 3 (+ 1 (hoch3 2))))
 ; (* (* 3 (+ 1 (hoch3 2))) (* 3 (+ 1 (hoch3 2))) (* 3 (+ 1 (hoch3 2))))
 ; (* (* 3 (+ 1 (* 2 2 2))) (* 3 (+ 1 (* 2 2 2))) (* 3 (+ 1 (* 2 2 2))))
@@ -17,7 +21,9 @@
 ; (* 27 27 27)
 ; 19683
 
-; applicative-order evaluation
+; Auswertung mit innerer Reduktion
+; Hier werden die Ausdrücke, die weiter innen stehen, zuerst ausgewertet.
+; Beispiel:
 ; (hoch3 (* 3 (+ 1 (hoch3 2))))
 ; (hoch3 (* 3 (+ 1 (* 2 2 2))))
 ; (hoch3 (* 3 (+ 1 8)))
@@ -26,8 +32,12 @@
 ; (* 27 27 27)
 ; 19683
 
-; Für Funktionen verwendet Racket applicative-order evaluation, für special
-; forms die normal-order evaluation.
+; Für Funktionen verwendet Racket die innere Reduktion. Special Forms werden
+; anders ausgewertet.
+; Beispiel: (define (foo x) (* 42 x))
+;           Würde hier die innere Reduktion verwendet werden, so würde versucht
+;           werden, (foo x) und (* 42 x) auszuwerden. Dies würde in einem Fehler
+;           resultieren, da foo wahrscheinlich noch nicht definiert ist.
 
 
 (define (new-if predicate then-clause else-clause)
@@ -35,9 +45,6 @@
               (else else-clause)))
 
 ; Würde Alyssa faculty mit Hilfe von new-if definieren, so würden die Argumente
-; in normal-order ausgewertet werden. D.h. faculty würde sich immer wieder
-; rekursiv aufrufen und die Abbruchbedingung würde nie geprüft werden.
-
-
-; Diese Aufgaben kenne ich doch irgendwoher ...
-; Hat wohl ein Zauberer geschrieben.
+; nach der inneren Reduktion ausgewertet werden. Damit würde auch die rekursive
+; else-clause ausgewertet, bevor eine Abbruchbedingung geprüft wird. Dadurch
+; entsteht eine Rekursion, die nicht freiwillig endet.
