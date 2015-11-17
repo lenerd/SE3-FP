@@ -65,5 +65,7 @@
              bs))
         
 
-(show-butterflies (list mother father))
-(show-butterflies (make-children mother father 3))
+; (show-butterflies (list mother father))
+; (show-butterflies (make-children mother father 3))
+
+(provide characteristics)
