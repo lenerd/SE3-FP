@@ -1,0 +1,48 @@
+SE3 FP Übungsblatt 6
+Gruppe 14 (Do. 10-12 Uhr R-031) bei David Mosteller
+Jan-Hendrik Briese, Lennart Braun, Felix Gebauer
+Aufgabe 1: Formen der Rekursion
+
+           | linear | Baum | geschachtelt | direkt | indirekt
+-----------+--------+------+--------------+--------+---------
+kopfstueck | ja     | nein | nein         | ja     | nein
+endstueck  | ja     | nein | nein         | ja     | nein
+merge      | ja     | ja   | nein         | ja     | nein
+merge-sort | nein   | ja   | nein         | ja     | nein
+
+kopfstueck
+linear:         Ja, da kopfstueck sich nur an einer Stelle rekursiv aufruft.
+baum:           Nein, da nur ein rekursiver Aufruf definiert ist.
+geschachtelt:   Nein, da keine rekursiven Aufrufe an sich selbst übergeben
+                werden.
+direkt:         Ja, da kopfstueck nicht indirekt rekursiv ist.
+indirekt:       Nein, da sich keine rekursive Funktionen wechselseitig aufrufen.
+
+endstueck
+linear:         Ja, da endstueck sich nur an einer Stelle rekursiv aufruft.
+baum:           Nein, da nur ein rekursiver Aufruf definiert ist.
+geschachtelt:   Nein, da keine rekursiven Aufrufe an sich selbst übergeben
+                werden.
+direkt:         Ja, da endstueck nicht indirekt rekursiv ist.
+indirekt:       Nein, da sich keine rekursiven Funktionen wechselseitig
+                aufrufen.
+
+merge
+linear:         Ja, da nur merge sich nur einmal rekursiv aufruft.
+baum:           Ja, da innerhalb einer Fallunterscheidung mehrfach auf merge
+                Bezug genommen wird.
+geschachtelt:   Nein, da keine rekursiven Aufrufe an sich selbst übergeben
+                werden.
+direkt:         Ja, da merge nicht indirekt rekursiv ist.
+indirekt:       Nein, da sich keine rekursiven Funktionen wechselseitig
+                aufrufen.
+
+merge-sort
+linear:         Nein, da merge-sort sich an mehreren Stellen rekursiv aufruft.
+baum:           Ja, da innerhalb einer Fallunterscheidung mehrfach auf merge
+                Bezug genommen wird.
+geschachtelt:   Nein, da die Aufrufe von merge-sort nicht an merge-sort selbst
+                sondern an merge übergeben werden.
+direkt:         Ja, da merge-sort nicht indirekt rekursiv ist.
+indirekt:       Nein. Zwar ruft merge-sort andere rekursive Funktionen, diese
+                rufen aber kein merge-sort auf.
