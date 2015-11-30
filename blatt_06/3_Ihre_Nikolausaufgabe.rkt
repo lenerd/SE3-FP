@@ -20,13 +20,3 @@
 
 (save-svg-image baum-flocken-baum "./baum-flocken-baum.svg")
 (save-image baum-flocken-baum "./baum-flocken-baum.png")
-
-
-;(save-svg-image (let ((tree (binary-tree 3 (λ () (wtf 300 3 6)))))
-;                     (place-image tree
-;                                  (/ (image-width tree) 2)
-;                                  (/ (image-height tree) 2)
-;                                  (empty-scene (image-width tree)
-;                                               (image-height tree)
-;                                               "PowderBlue")))
-;                "./baum-flocken-baum.svg")
