@@ -9,6 +9,7 @@
 (require 2htdp/image)
 (require "./2.2_wertebereiche.rkt")
 
+; Malt Punkte.
 (define (draw-points pointlist)
         (apply (curry foldl
                       (curry place-image (ellipse 2 2 "solid" "blue"))

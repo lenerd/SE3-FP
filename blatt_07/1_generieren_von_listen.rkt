@@ -6,6 +6,7 @@
 ; Aufgabe 1: Generieren von Listen
 
 
+; Macht n Zahlen in interval.
 (define (range1 interval n)
         (let ((step (/ (- (cdr interval)
                           (car interval))
@@ -16,6 +17,7 @@
              (helper 0)))
                     
 
+; Macht n Zahlen in interval anders. 
 (define (range2 interval n)
         (let ((step (/ (- (cdr interval)
                           (car interval))
@@ -33,6 +35,7 @@
                      1)))
 
 
+; Macht n Zahlen in interval wieder anders. 
 (define (range3 interval n)
         (let ((step (/ (- (cdr interval)
                           (car interval))

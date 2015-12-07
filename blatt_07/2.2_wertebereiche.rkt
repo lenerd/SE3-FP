@@ -6,6 +6,7 @@
 ; Aufgabe 2.2: Wertebereiche
 
 
+; Rescaled xs auf interval.
 (define (rescale1d xs interval)
         (map (λ (x) (+ (car interval) 
                        (* (/ x (apply max xs))
@@ -19,6 +20,7 @@
         (apply map cons ps))
 
 
+; Rescaled doppelt.
 (define (rescale2d xys xinterval yinterval)
         (zip-lists->pairs (map rescale1d (zip-pairs->lists xys) (list xinterval yinterval))))
         

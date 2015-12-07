@@ -9,6 +9,7 @@
 (require "./1_generieren_von_listen.rkt")
 
 
+; Evaluiert f.
 (define (function->points f interval n)
         (map (λ (x) (cons x (f x)))
              (range interval n)))

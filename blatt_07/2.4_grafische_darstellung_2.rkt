@@ -10,11 +10,14 @@
 (require "./2.1_funktionen_und_werte.rkt")
 
 
+; Plottet f groß.
 (define (plot-function f interval n)
         (draw-points (rescale2d (function->points f interval n)
                                 '(0 . 600)
                                 '(0 . 600))))
 
 
-(plot-function (λ (x) (log x)) ' (1 . 1000) 1000)
-;(plot-function (λ (x) (+ 1 (sin x))) ' (1 . 10) 1000)
+;(plot-function (λ (x) (log x)) ' (1 . 1000) 1000)
+;(plot-function (λ (x) (+ 1 (sin x))) ' (0 . 10) 1000)
+
+(provide plot-function)
