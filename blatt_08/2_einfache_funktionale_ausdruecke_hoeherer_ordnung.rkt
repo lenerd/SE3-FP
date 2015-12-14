@@ -2,7 +2,7 @@
 #lang racket
 ; SE3 FP Übungsblatt 8
 ; Gruppe 14 (Do. 10-12 Uhr R-031) bei David Mosteller
-; Jan-Hendrik Briese, Lennart Braun, Felix Gebauer
+; Lennart Braun
 ; Aufgabe 2: Einfache funktionale Ausdrücke höherer Ordnung
 
 
