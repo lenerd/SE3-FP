@@ -62,17 +62,15 @@
 (define (spiel-konsistent? spiel)
 
         ; Prüft, ob ein/e Zeile/Spalte/Quadrant konsistent ist.
-        (define (part-konsistent? xs)
-                (not (check-duplicates xs (λ (x y) (and (eq? x y) (> x 0))))))
+        (define (konsistent-part? x idx-func)
+                (not (check-duplicates (spiel->eintraege spiel (idx-func x))
+                                       (λ (a b) (and (eq? a b) (> a 0))))))
 
         ; Prüft, ob Zeile/Spalte/Quadrant mit Index x jeweils konsistent ist.
-        (define (idx-konsistent? x)
-                (andmap part-konsistent?
-                        (list (spiel->eintraege spiel (zeile->indizes x))
-                              (spiel->eintraege spiel (spalte->indizes x))
-                              (spiel->eintraege spiel (quadrant->indizes x)))))
+        (define (konsistent-index? x)
+                (andmap (curry konsistent-part? x) index-functions))
 
-        (andmap idx-konsistent? (range 9)))
+        (andmap konsistent-index? (range 9)))
 
 
 ; Prüft, ob das Spiel gelöst ist.
