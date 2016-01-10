@@ -46,9 +46,15 @@
                   '(0 1 2 9 10 11 18 19 20))))
 
 
+; Liste der definierten Indexfunktionen
 (define index-functions (list zeile->indizes
                               spalte->indizes
                               quadrant->indizes))
+
+
+; Erstellt Liste mit allen Indexgruppen.
+(define (index-parts)
+        (apply append (map (curryr map (range 9)) index-functions)))
 
 
 ; 3.
@@ -56,21 +62,19 @@
 (define (spiel->eintraege feld idxs)
         (map (curry vector-ref feld) idxs))
 
+; Erstellt Liste mit allen Gruppen des Feldes.
+(define (entry-parts feld)
+        (map (curry spiel->eintraege feld) (index-parts)))
+
+
 
 ; 4.
 ; Prüft, ob das Spiel in einem konsistenten Zustand ist.
 (define (spiel-konsistent? spiel)
-
-        ; Prüft, ob ein/e Zeile/Spalte/Quadrant konsistent ist.
-        (define (konsistent-part? x idx-func)
-                (not (check-duplicates (spiel->eintraege spiel (idx-func x))
-                                       (λ (a b) (and (eq? a b) (> a 0))))))
-
-        ; Prüft, ob Zeile/Spalte/Quadrant mit Index x jeweils konsistent ist.
-        (define (konsistent-index? x)
-                (andmap (curry konsistent-part? x) index-functions))
-
-        (andmap konsistent-index? (range 9)))
+        (andmap (compose not 
+                         (curryr check-duplicates
+                                 (λ (a b) (and (eq? a b) (> a 0)))))
+                (entry-parts spiel)))
 
 
 ; Prüft, ob das Spiel gelöst ist.
@@ -86,76 +90,67 @@
 ; einem 'X
 (define (markiere-ausschluss feld n)
 
-        
-        (define (vec-replace! vec idxs from to)
+        ; Ersetzt from durch to im Vektor vec an den Indizes idxs
+        (define (vector-replace! vec idxs from to)
                 (map (λ (i) (when (eq? (vector-ref vec i) from)
                                   (vector-set! vec i to)))
                      idxs))
 
-        (define (mark-part mark-feld x idx-func)
-                (if (member n (spiel->eintraege mark-feld (idx-func x)))
-                    (begin (vec-replace! mark-feld (idx-func x) 0 'X)
+        ; Markiert Positionen in einzelnen Gruppen.
+        (define (helper mark-feld idxs)
+                (if (member n (spiel->eintraege mark-feld idxs))
+                    (begin (vector-replace! mark-feld idxs 0 'X)
                            #t)
                     #f))
 
-        (define (mark-index mark-feld x)
-                (map (curry mark-part mark-feld x) index-functions))
-
         (let ((mark-feld (vector-copy feld)))
-             (map (curry mark-index mark-feld) (range 9))
-             ;(vector-set! mark-feld 42 'X)
+             (map (curry helper mark-feld)
+                  (index-parts))
              mark-feld))
 
 
-(define spielm #(0 X 0 0 0 9 X 7 X
-                 X X X X 8 2 X 5 X
-                 3 2 7 0 0 0 X 4 X
-                 X 1 6 0 4 0 0 X X
-                 X 5 X X X X 3 X X
-                 X X X 0 9 0 7 X X
-                 X X X 6 X X X X 5
-                 8 X 2 0 0 0 X X X
-                 0 X 4 2 0 0 X X 8))
 
 ; 2.
-; TODO
+; Bestimmt Positionen auf dem Feld, an denen auf jeden Fall n stehen muss.
 (define (eindeutige-positionen feld n)
 
-        (define (positionen-part marked x idx-func)
-                (let* ((marked-xs (spiel->eintraege marked (idx-func x)))
-                       (free (- 9 (length (or (member 0 marked-xs) '())))))
+        ; Bestimmt Positionen in einer Gruppe, an denen auf jeden Fall n stehen
+        ; muss.
+        (define (positionen-part marked idxs)
+                (let* ((marked-xs (spiel->eintraege marked idxs)))
                       (if (= 1 (count (curry eq? 0) marked-xs))
-                          (list (list-ref (idx-func x) free))
+                          (list (list-ref idxs (- 9 (length (member 0 marked-xs)))))
                           '())))
 
-        (define (positionen-index marked x)
-                (foldl append '() (map (curry positionen-part marked x) index-functions)))
-
         (let ((marked (markiere-ausschluss feld n)))
-             (remove-duplicates (foldl append '() (map (curry positionen-index marked) (range 9))))))
-
+             (remove-duplicates (apply append
+                                       (map (curry positionen-part marked)
+                                            (index-parts))))))
 
 
 ; 3.
-; TODO
+; Löst das Sudoku.
 (define (loese-spiel feld)
 
+        ; Löst das Sudoku auf einer veränderbaren Kopie der Eingabe.
         (define (loese mutable-feld)
-                (let ((positions (flatten (foldl append
-                                                 '()
-                                                 (map (λ (n)
-                                                         (map (curryr cons n)
-                                                              (eindeutige-positionen mutable-feld n)))
-                                                      (range 1 10))))))
-                     (cond [(not (empty? positions)) (apply (curry vector-set*! mutable-feld)
-                                                            positions)
-                                                     (loese-spiel mutable-feld)]
-                           [(spiel-geloest? mutable-feld) (display "Done\n")
-                                                      mutable-feld]
-                           [else (display "Failed\n")])))
+                (let ((poss (flatten (apply append
+                                            (map (λ (n)
+                                                    (map (curryr cons n)
+                                                         (eindeutige-positionen mutable-feld
+                                                                                n)))
+                                                 (range 1 10))))))
+                     (cond [(not (empty? poss))             ; Weiter machen.
+                            (apply (curry vector-set*! mutable-feld) poss)
+                            (loese-spiel mutable-feld)]
+                           [(spiel-geloest? mutable-feld)   ; Fertig
+                            (display "Done\n")
+                            mutable-feld]
+                           [else                            ; Nicht lösbar.
+                            (display "Failed\n")])))
 
         (let ((feld-cpy (vector-copy feld)))
              (loese feld-cpy)))
 
 
-(loese-spiel spiel)
+; (loese-spiel spiel)
