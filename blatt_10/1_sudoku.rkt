@@ -5,6 +5,8 @@
 ; Lennart Braun
 ; Aufgabe 1: Sudoku
 
+(require 2htdp/image)
+
 
 ; Aufgabe 1.1: Konsistenz eines Spielzustands
 
@@ -25,6 +27,12 @@
 ; Vektors um.
 (define (xy->index x y)
         (+ x (* y 9)))
+
+; Wandelt Indizes im eindimensionalen Vektor in zweidimensionale Indizes des
+; Spielfeldes um.
+(define (index->xy i)
+        (list (remainder i 9)
+              (quotient i 9)))
 
 
 ; 2.
@@ -130,7 +138,9 @@
 
 ; 3.
 ; Löst das Sudoku.
-(define (loese-spiel feld)
+; Falls hook callable ist, führe es je einmal zu Beginn und zum Ende mit dem
+; Feld aus ist always #t, rufe hook nach jeder Iteration.
+(define loese-spiel (λ (feld [hook 0] [always #f])
 
         ; Löst das Sudoku auf einer veränderbaren Kopie der Eingabe.
         (define (loese mutable-feld)
@@ -141,8 +151,10 @@
                                                                                 n)))
                                                  (range 1 10))))))
                      (cond [(not (empty? poss))             ; Weiter machen.
+                            (when (and (procedure? hook) always)
+                                  (hook mutable-feld))
                             (apply (curry vector-set*! mutable-feld) poss)
-                            (loese-spiel mutable-feld)]
+                            (loese mutable-feld)]
                            [(spiel-geloest? mutable-feld)   ; Fertig
                             (display "Done\n")
                             mutable-feld]
@@ -150,7 +162,76 @@
                             (display "Failed\n")])))
 
         (let ((feld-cpy (vector-copy feld)))
-             (loese feld-cpy)))
+             (when (procedure? hook) (hook feld-cpy))
+             ((λ (feld) (when (procedure? hook) (hook feld))
+                        feld)
+              (loese feld-cpy))
+             )))
 
 
 ; (loese-spiel spiel)
+
+
+
+; Aufgabe 1.3: Grafische Ausgabe
+
+; 1.
+; In 1.2.2 steht nicht von annotierten Spielfeldern.
+; Felder mit eindeutiger Belegung gemeint?
+
+; Zeichnet das Spielfeld feld.
+(define (zeichne-spiel feld)
+        (define (draw-number n)
+                (text (number->string n) 8 "black"))
+
+        (define (get-pen x)
+                (if (= 0 (remainder x 3))
+                    (make-pen "black" 1 "solid" "round" "round")
+                    "black"))
+
+        (define (draw-grid)
+          (foldl (λ (x img) (add-line img (* 10 x) 0 (* 10 x) 90 (get-pen x)))
+                 (foldl (λ (x img) (add-line img 0 (* 10 x) 90 (* 10 x) (get-pen x)))
+                        (rectangle 90 90 "solid" "white")
+                        (range 10))
+                 (range 10)))
+
+        (define (place-number n grid idx)
+                (let ((xy (index->xy idx)))
+                     (underlay/offset grid
+                                      (* 10 (- (car xy) 4))
+                                      (* 10 (- (cadr xy) 4))
+                                      (draw-number n))))
+
+        (scale 5 (foldl (λ (n idx img) (if (> n 0) (place-number n img idx)
+                                                   img))
+                        (draw-grid)
+                        (map (curry vector-ref feld) (range 81))
+                        (range 81))))
+
+; (zeichne-spiel spiel)
+; (zeichne-spiel (loese-spiel spiel))
+
+
+; 2.
+
+(define (printer feld)
+        (begin (display (zeichne-spiel feld))
+               (display "\n")
+               feld))
+
+
+; Lört Sudoku mit Ausgabe.
+(define (loese-spiel-grafisch feld short)
+
+        (define (printer feld)
+                (begin (display (zeichne-spiel feld))
+                       (display "\n")
+                       feld))
+
+        (loese-spiel feld printer (not short)))
+
+
+; (loese-spiel-grafisch spiel #t)
+; (loese-spiel-grafisch spiel #f)
+
