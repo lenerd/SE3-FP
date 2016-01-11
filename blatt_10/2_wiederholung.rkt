@@ -34,11 +34,13 @@
 ;(equal? (list 'Racket 'Prolog 'Java)
 ;        '(Racket Prolog Java))
 ;#t
+; equal? testet auf Gleichheit.
 
 ; (h)
 ;(eq? (list 'Racket 'Prolog 'Java)
 ;     (cons 'Racket '(Prolog Java)))
 ;#f
+; eq? testet auf Identität.
 
 ; (i)
 ;(map (lambda (x) (* x x x))
@@ -76,19 +78,19 @@
 ;20
 
 ; (c)
-; (+ (eval *a*) (eval *b*))
-; 20 in der REPL, funktioniert nicht im Skript
+;(+ (eval *a*) (eval *b*))
+;20 in der REPL, funktioniert nicht im Skript
 
 ; (d)
 ;(and (> *a* 10) (> *b* 3))
 ;#f
 
 ; (e)
-; (or (> *a* 10) (/ *a* 0))
+;(or (> *a* 10) (/ *a* 0))
 ; Exception: division by zero
 
 ; (f)
-; (+ 2 (merke 3))
+;(+ 2 (merke 3))
 ; Exception: contract violation  <- Number + Function
 
 ; (g)
@@ -134,8 +136,30 @@
 
 
 ; 7.
-; TODO: Text
+; Sei square wie folgt definiert.
+(define (square x) (* x x))
+; (a)
+; Bei der inneren Reduktion werden Ausdrücke von innen nach außen evaluert.
+; Beispiel:
+;(square (+ 1 2 3))
+;(square 6)
+;(* 6 6)
+;36
 
+; Bei der äußeren Reduktion geschieht dies anders herum.
+; Beispiel:
+;(square (+ 1 2 3))
+;(* (+ 1 2 3) (+ 1 2 3))
+;(* 6 6)
+;36
+
+; (b)
+; Wenn eine Funktion bei gleicher Eingabe immer die gleiche Ausgabe liefert
+; (Bezugstransparenz), führen innere und äußere Reduktion zum gleichen
+; Ergebnis.
+; Eine Fallunterscheidung (z.B. durch if) zum Abbruch einer Rekursion ist durch
+; die Auswertung mit äußerer Reduktion angewiesen, da die Rekursion sonst unter
+; Umständen nicht enden würde.
 
 
 ; 8.
@@ -157,18 +181,19 @@
 ; 9.
 ; (a)
 (define make-length list)
-(make-length 3 'cm)
+;(make-length 3 'cm)
 
 ; (b)
 (define value-of-length car)
 (define unit-of-length cadr)
-(value-of-length (make-length 3 'cm))
-(unit-of-length (make-length 3 'cm))
+;(value-of-length (make-length 3 'cm))
+;(unit-of-length (make-length 3 'cm))
 
 ; (c)
+; Skalierung
 (define (scale-length len fac)
         (make-length (* fac (value-of-length len)) (unit-of-length len)))
-(value-of-length (scale-length (make-length 3 'cm) 2))
+;(value-of-length (scale-length (make-length 3 'cm) 2))
 
 ; (d)
 (define *conversiontable* ;
@@ -181,41 +206,54 @@
           (feet . 0.3048)
           (yard . 0.9144)))
 
+; Auslesen des Umrechungsfactors
 (define factor (compose cdr (curryr assoc *conversiontable*)))
-(factor 'mm)
+;(factor 'mm)
 
 
+; Umwandlung in Meter
 (define (length->meter len)
         (make-length ((compose (curry * (value-of-length len))
                                factor
                                unit-of-length)
                       len)
                      'm))
-(length->meter '(3 cm))
+;(length->meter '(3 cm))
 
 
+; kleiner-als über Längen
 (define (length< . lens)
         (apply < (map (compose value-of-length length->meter) lens)))
+; gleich über Längen
 (define (length= . lens)
         (apply = (map (compose value-of-length length->meter) lens)))
 
-(length< '(3 cm) '(6 km))
-(length= '(300 cm) '(3 m))
+;(length< '(3 cm) '(6 km))
+;(length= '(300 cm) '(3 m))
 
 
 (define (_length-arith func . lens)
         (make-length (apply func (map (compose value-of-length length->meter) lens))
                      'm))
+
+; Addition über Längen
 (define length+ (curry _length-arith +))
+; Subtraktion über Längen
 (define length- (curry _length-arith -))
-(length+ '(3 cm) '(1 km))
-(length- '(1.001 km) '(1 m))
+;(length+ '(3 cm) '(1 km))
+;(length- '(1.001 km) '(1 m))
 
 ; (e)
 (define lens '((6 km) (2 feet) (1 cm) (3 inch)))
-lens
 
-(map length->meter lens)
-(filter (curryr length< '(1 m)) lens)
-(apply length+ lens)
-(foldl (λ (a b) (if (length< a b) a b)) (car lens) (cdr lens))
+; Liste der Längen in Metern.
+;(map length->meter lens)
+
+; Liste der Längen, die kürzer als 1 m sind.
+;(filter (curryr length< '(1 m)) lens)
+
+; Summe aller Längen
+;(apply length+ lens)
+
+; Kürzeste Länge.
+;(foldl (λ (a b) (if (length< a b) a b)) (car lens) (cdr lens))
